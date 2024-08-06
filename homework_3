@@ -1,0 +1,27 @@
+import os
+
+def read_file_content(filename):
+    try:
+        with open(filename, 'r', encoding='utf-8') as file:
+            return file.read()
+    except FileNotFoundError:
+        print(f"Файл {filename} не найден.")
+        return ""
+
+content_11 = read_file_content('11.txt')
+content_22 = read_file_content('22.txt')
+content_33 = read_file_content('33.txt')
+
+lines_11 = len(content_11.split('\n'))
+lines_22 = len(content_22.split('\n'))
+lines_33 = len(content_33.split('\n'))
+
+files = [('11.txt', lines_11), ('22.txt', lines_22), ('33.txt', lines_33)]
+sorted_files = sorted(files, key=lambda x: x[1])
+
+with open('add_all.txt', 'w', encoding='utf-8') as outfile:
+    for file_name, num_lines in sorted_files:
+        outfile.write(f"\n{file_name}\n{num_lines}\n")
+        outfile.write(content_11 if file_name == '11.txt' else content_22 if file_name == '22.txt' else content_33)
+
+print(open('add_all.txt').read())
