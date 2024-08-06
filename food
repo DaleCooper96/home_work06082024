@@ -1,0 +1,32 @@
+import re
+
+with open('food.txt', 'r', encoding='utf-8') as file:
+    content = file.read()
+
+recipe_pattern = r'(\w+)\n\d+\n((?:.*\|\s*\d+\s*[\w\s]+)+)'
+recipes = re.findall(recipe_pattern, content, re.DOTALL)
+
+cook_book = {}
+for dish, ingredients_str in recipes:
+    ingredients = [re.split(r'\|\s*', ing) for ing in ingredients_str.split('\n')]
+    formatted_ingredients = []
+    for ing in ingredients:
+        if len(ing) >= 3:
+            formatted_ingredients.append({'ingredient_name': ing[0], 'quantity': int(ing[1]), 'measure': ing[2]})
+    
+    cook_book[dish] = formatted_ingredients
+
+def get_shop_list_by_dishes(dishes, person_count):
+    shop_list = {}
+    for dish in dishes:
+        if dish in cook_book:
+            for ingredient in cook_book[dish]:
+                measure = ingredient['measure']
+                quantity = ingredient['quantity'] * person_count
+                if ingredient['ingredient_name'] in shop_list:
+                    shop_list[ingredient['ingredient_name']]['quantity'] += quantity
+                else:
+                    shop_list[ingredient['ingredient_name']] = {'measure': measure, 'quantity': quantity}
+    return shop_list
+
+print(get_shop_list_by_dishes(['Запеченный картофель', 'Омлет'], 2))
